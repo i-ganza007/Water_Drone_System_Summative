@@ -340,3 +340,13 @@ class WildfireRenderer:
         if self.window:
             pygame.quit()
             self.window = None
+
+
+# Test the renderer if run directly
+if __name__ == "__main__":
+    print("Testing WildfireRenderer...")
+    print("Note: This file is meant to be imported by the environment.")
+    print("To see the GUI, run:")
+    print("  python environment/custom_env.py")
+    print("  or")
+    print("  python main.py")

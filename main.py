@@ -223,16 +223,20 @@ class WildfireDroneEnvironment(gym.Env):
             
         if self.window is None and self.render_mode == "human":
             pygame.init()
-            self.window = pygame.display.set_mode((700, 750))  # Wider for legend
+            pygame.display.set_mode((600, 650))  # Smaller window size
+            # Position window to the left side of screen
+            import os
+            os.environ['SDL_VIDEO_WINDOW_POS'] = '100,50'  # x=100, y=50 from top-left
+            self.window = pygame.display.set_mode((600, 650))
             pygame.display.set_caption("🚁 Wildfire Drone Coordination System 🔥")
             self.clock = pygame.time.Clock()
 
-        canvas = pygame.Surface((700, 600))
+        canvas = pygame.Surface((600, 520))  # Smaller canvas to match window
         
         # ====================================================================
         # FOREST BACKGROUND with terrain variation
         # ====================================================================
-        pix = 600 / self.grid_size
+        pix = 520 / self.grid_size  # Adjusted for smaller canvas
         
         # Create varied forest terrain (different shades of green)
         for x in range(self.grid_size):
@@ -414,9 +418,9 @@ class WildfireDroneEnvironment(gym.Env):
         # ====================================================================
         for x in range(self.grid_size + 1):
             pygame.draw.line(canvas, (80, 80, 60), 
-                           (x*pix, 0), (x*pix, 600), 1)
+                           (x*pix, 0), (x*pix, 520), 1)  # Updated height
             pygame.draw.line(canvas, (80, 80, 60), 
-                           (0, x*pix), (600, x*pix), 1)
+                           (0, x*pix), (520, x*pix), 1)  # Updated width
         
         # Render to window
         if self.render_mode == "human":
@@ -432,9 +436,9 @@ class WildfireDroneEnvironment(gym.Env):
             # ================================================================
             # INFORMATION PANEL - Enhanced UI
             # ================================================================
-            font_large = pygame.font.Font(None, 40)
-            font_small = pygame.font.Font(None, 28)
-            info_y = 615
+            font_large = pygame.font.Font(None, 36)  # Slightly smaller font
+            font_small = pygame.font.Font(None, 24)   # Smaller font
+            info_y = 535  # Adjusted for smaller window
             
             # Mission status banner
             fires_left = self.num_fires - np.sum(self.extinguished_fires)
@@ -454,9 +458,9 @@ class WildfireDroneEnvironment(gym.Env):
             self.window.blit(water_text, (20, info_y))
             
             # Progress bar for water
-            bar_x, bar_y = 220, info_y + 2
-            bar_width = 250
-            bar_height = 22
+            bar_x, bar_y = 180, info_y + 2  # Adjusted position
+            bar_width = 200  # Smaller bar width
+            bar_height = 18  # Smaller bar height
             pygame.draw.rect(self.window, (60, 60, 60), 
                            (bar_x, bar_y, bar_width, bar_height), border_radius=5)
             water_fill = int(bar_width * (self.water_capacity / self.max_water_capacity))
@@ -507,18 +511,18 @@ class WildfireDroneEnvironment(gym.Env):
                              (wind_end_x, wind_end_y), 5)
             
             # Legend
-            legend_x = 250
+            legend_x = 200  # Adjusted for smaller window
             legend_text = font_small.render("Legend:", True, (150, 150, 150))
             self.window.blit(legend_text, (legend_x, info_y))
             
             # Color indicators
-            pygame.draw.circle(self.window, (255, 100, 0), (legend_x + 80, info_y + 10), 8)
+            pygame.draw.circle(self.window, (255, 100, 0), (legend_x + 70, info_y + 8), 6)  # Smaller circles
             legend_fire = font_small.render("Active Fire", True, (200, 200, 200))
-            self.window.blit(legend_fire, (legend_x + 95, info_y))
+            self.window.blit(legend_fire, (legend_x + 85, info_y))
             
-            pygame.draw.circle(self.window, (30, 30, 30), (legend_x + 210, info_y + 10), 8)
+            pygame.draw.circle(self.window, (30, 30, 30), (legend_x + 170, info_y + 8), 6)
             legend_ext = font_small.render("Extinguished", True, (200, 200, 200))
-            self.window.blit(legend_ext, (legend_x + 225, info_y))
+            self.window.blit(legend_ext, (legend_x + 185, info_y))
             
             pygame.display.flip()
             self.clock.tick(30)
